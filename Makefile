@@ -6,7 +6,7 @@
 #    By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/22 14:29:55 by leldiss           #+#    #+#              #
-#    Updated: 2022/05/16 00:07:38 by leldiss          ###   ########.fr        #
+#    Updated: 2022/05/17 18:26:25 by leldiss          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ CC = gcc
 
 RM = rm -f
 
-FLAGS = -pthread
+FLAGS = -pthread -Wall -Wextra -Werror
 
 all: $(PHILO)
 

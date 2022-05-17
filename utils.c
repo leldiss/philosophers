@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:28:05 by leldiss           #+#    #+#             */
-/*   Updated: 2022/05/16 21:39:51 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/05/17 18:19:12 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,20 +45,20 @@ void	error_message(int error)
 
 long long	get_timestamp(void)
 {
-	struct	timeval	time;
+	struct timeval	time;
 
 	gettimeofday(&time, NULL);
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-int is_philo_dead(t_philo *philo)
+int	is_philo_dead(t_philo *philo)
 {
-	struct timeval time;
-	int diff;
+	struct timeval	time;
+	int				diff;
 
 	gettimeofday(&time, NULL);
 	diff = (time.tv_sec * 1000) + (time.tv_usec / 1000) - philo->time_last_meal;
-	if (philo->conditions->time_to_die < diff)
+	if (philo->conditions->time_to_die <= diff)
 	{
 		philo->alive = 0;
 		return (1);

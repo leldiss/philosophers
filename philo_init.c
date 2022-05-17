@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:27:30 by leldiss           #+#    #+#             */
-/*   Updated: 2022/05/16 21:52:56 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/05/17 17:11:26 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@ void	init_mutex(t_info *info)
 	count = 0;
 	while (count < info->philo)
 	{
-		pthread_mutex_init(&(info->forks[count]), NULL); // Написать проверку
+		if (pthread_mutex_init(&(info->forks[count]), NULL))
+			error_message(-4);
 		count++;
 	}
 }
 
-
-void	init_philosophers(t_info *info) 
+void	init_philosophers(t_info *info)
 {
 	int	count;
-	
+
 	count = 0;
-	while (count < info->philo) 
+	while (count < info->philo)
 	{
 		info->philosopher[count].id = count;
 		info->philosopher[count].left_fork_id = count;
@@ -42,7 +42,7 @@ void	init_philosophers(t_info *info)
 	}
 }
 
-void	init(t_info *info, char **argv, int argc) 
+void	init(t_info *info, char **argv, int argc)
 {
 	info->philo = ft_atoi(argv[1]);
 	info->time_to_die = ft_atoi(argv[2]);

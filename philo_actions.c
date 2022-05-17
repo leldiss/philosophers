@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/05/16 22:04:31 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/05/17 18:28:23 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,17 @@ void	philo_sleep(t_philo *philo)
 	int	time;
 
 	time = get_timestamp() - philo->time_last_meal;
+	if (time < philo->conditions->time_to_die)
+	{
+		if (philo->conditions->time_to_die - time
+			>= philo->conditions->time_to_sleep)
+			time = philo->conditions->time_to_sleep;
+		else
+			time = philo->conditions->time_to_die - time;
+	}
+	else
+		time = 1;
+	show_actions(philo, "is sleeping");
 	usleep(time * 1000);
 }
 
@@ -33,9 +44,17 @@ void	start_eating(t_philo *philo)
 	t_info	*conditions;
 
 	conditions = philo->conditions;
-	pthread_mutex_lock(&(conditions->forks[philo->left_fork_id]));
+	if (philo->id % 2 == 0)
+	{
+		pthread_mutex_lock(&(conditions->forks[philo->left_fork_id]));
+		pthread_mutex_lock(&(conditions->forks[philo->right_fork_id]));
+	}
+	else
+	{
+		pthread_mutex_lock(&(conditions->forks[philo->right_fork_id]));
+		pthread_mutex_lock(&(conditions->forks[philo->left_fork_id]));
+	}
 	show_actions(philo, "has taken a fork");
-	pthread_mutex_lock(&(conditions->forks[philo->right_fork_id]));
 	show_actions(philo, "has taken a fork");
 	show_actions(philo, "is eating");
 	usleep(philo->conditions->time_to_eat * 1000);
@@ -45,13 +64,11 @@ void	start_eating(t_philo *philo)
 	philo->ate_count++;
 }
 
-void *start_actions(void *args)
+void	*start_actions(void *args)
 {
-	t_philo *philo;
-	t_info	*info;
+	t_philo	*philo;
 
-	philo = (t_philo*)args;
-	info = philo->conditions;
+	philo = (t_philo *)args;
 	if (philo->id % 2 == 0)
 	{
 		show_actions(philo, "is sleeping");
@@ -64,26 +81,27 @@ void *start_actions(void *args)
 			if (philo->ate_count != philo->conditions->times_must_eat)
 				start_eating(philo);
 		}
-		show_actions(philo, "is sleeping");
 		philo_sleep(philo);
 		if (is_philo_dead(philo))
-			break;
+			break ;
 		show_actions(philo, "is thinking");
 	}
-	show_actions(philo, "died"); 
+	show_actions(philo, "died");
+	return (philo);
 }
 
 void	get_started(t_info *info)
 {
-	int	i;
-	t_philo *philosophers;
+	int		i;
+	t_philo	*philosophers;
 
 	philosophers = info->philosopher;
 	i = 0;
 	info->start_time = get_timestamp();
 	while (i < info->philo)
 	{
-		if (pthread_create(&(philosophers[i].thread_id), NULL, start_actions, &(philosophers[i])))
+		if (pthread_create(&(philosophers[i].thread_id),
+				NULL, start_actions, &(philosophers[i])))
 			error_message(-2);
 		philosophers[i].time_last_meal = get_timestamp();
 		i++;
