@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 13:38:29 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:42:22 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	get_started(t_info *info)
 		philosophers[i].time_last_meal = get_timestamp();
 		philosophers[i].philo_pid = fork();
 		if (philosophers[i].philo_pid < 0)
-			error_message(-2);
+			error_message(-2, info);
 		else if (philosophers[i].philo_pid == 0)
 		{
 			start_actions(philosophers, i);

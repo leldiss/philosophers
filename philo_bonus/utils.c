@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:28:05 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 14:01:47 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:41:18 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	print_error_message(char *str)
 	write(1, "\n", 1);
 }
 
-void	error_message(int error)
+void	error_message(int error, t_info *info)
 {
 	if (error == -1)
 		print_error_message("Wrong arguments");
@@ -40,6 +40,7 @@ void	error_message(int error)
 		print_error_message("Argument is more than MAX_INT");
 	else if (error == -7)
 		print_error_message("Only numeral arguments is allowed");
+	free_all(info);
 	exit(error);
 }
 
@@ -66,7 +67,7 @@ int	is_philo_dead(t_philo *philo)
 	return (0);
 }
 
-int	ft_atoi(const char *str)
+int	ft_atoi(const char *str, t_info *info)
 {
 	unsigned int	result;
 
@@ -76,13 +77,13 @@ int	ft_atoi(const char *str)
 	if (*str == '-' || *str == '+')
 	{
 		if (*str == '-')
-			error_message(-5);
+			error_message(-5, info);
 		str++;
 	}
 	while (*str != '\0')
 	{
 		if (*str < '0' || *str > '9')
-			error_message(-7);
+			error_message(-7, info);
 		if (*str >= '0' && *str <= '9')
 		{
 			result = (result * 10) + (*str % 48);
@@ -90,6 +91,6 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	if (result > MAX_INT)
-		error_message(-6);
+		error_message(-6, info);
 	return (result);
 }

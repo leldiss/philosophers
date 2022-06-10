@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:45 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 13:35:16 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:45:39 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ int	is_late(t_philo *philo, t_info *info)
 
 void	free_all(t_info *info)
 {
+	if (info == NULL)
+		return ;
 	if (info->forks != NULL)
 		sem_close(info->forks);
 	if (info->philosopher != NULL)
@@ -68,6 +70,7 @@ int	main(int argc, char **argv)
 	int		ret;
 
 	i = 0;
+	info = NULL;
 	if (argc == 6 || argc == 5)
 	{
 		info = create_info();
@@ -81,5 +84,5 @@ int	main(int argc, char **argv)
 		free_all(info);
 	}
 	else
-		error_message(-1);
+		error_message(-1, info);
 }

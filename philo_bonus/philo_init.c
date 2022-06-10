@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:27:30 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/09 23:12:32 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:42:50 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,17 @@ void	init_sem(t_info *info)
 	sem_unlink("/forks");
 	info->forks = sem_open("/forks", O_CREAT, S_IRWXU, info->philo);
 	if (info->forks == SEM_FAILED)
-		error_message(-4);
+		error_message(-4, info);
 }
 
 void	init(t_info *info, char **argv, int argc)
 {
-	info->philo = ft_atoi(argv[1]);
-	info->time_to_die = ft_atoi(argv[2]);
-	info->time_to_eat = ft_atoi(argv[3]);
-	info->time_to_sleep = ft_atoi(argv[4]);
+	info->philo = ft_atoi(argv[1], info);
+	info->time_to_die = ft_atoi(argv[2], info);
+	info->time_to_eat = ft_atoi(argv[3], info);
+	info->time_to_sleep = ft_atoi(argv[4], info);
 	if (argc == 6)
-		info->times_must_eat = ft_atoi(argv[5]);
+		info->times_must_eat = ft_atoi(argv[5], info);
 	else
 		info->times_must_eat = -1;
 	init_philo(info, info->philo);

@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:40 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 13:45:09 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 15:43:30 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ void		init_philo(t_info *info, int size);
 void		free_all(t_info *info);
 
 void		print_error_message(char *str);
-void		error_message(int error);
-int			ft_atoi(const char *str);
+void		error_message(int error, t_info *info);
+int			ft_atoi(const char *str, t_info *info);
 void		show_actions(t_philo *philo, char *msg);
 long long	get_timestamp(void);
 int			is_philo_dead(t_philo *philo);
