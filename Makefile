@@ -5,21 +5,32 @@
 #                                                     +:+ +:+         +:+      #
 #    By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/04/22 14:29:55 by leldiss           #+#    #+#              #
-#    Updated: 2022/05/17 18:26:25 by leldiss          ###   ########.fr        #
+#    Created: 2022/06/10 14:10:51 by leldiss           #+#    #+#              #
+#    Updated: 2022/06/10 14:12:18 by leldiss          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 PHILO	= philo
 
-PHILO_SRCS = philo.c \
-				./philo_actions.c \
-				./philo_init.c \
-				./utils.c \
+PHILO_BONUS = philo_bonus
+
+PHILO_SRCS = philo/philo.c \
+				philo/philo_actions.c \
+				philo/philo_init.c \
+				philo/utils.c \
+
+PHILO_BONUS_SRCS = philo_bonus/philo.c \
+				philo_bonus/philo_actions.c \
+				philo_bonus/philo_init.c \
+				philo_bonus/utils.c \
 
 OBJ = $(PHILO_SRCS:.c=.o)
 
-HEADER	= philo.h
+OBJ_BONUS = $(PHILO_BONUS_SRCS:.c=.o)
+
+HEADER	= philo/philo.h
+
+HEADER_BONUS = philo_bonus/philo.h
 
 CC = gcc
 
@@ -29,14 +40,19 @@ FLAGS = -pthread -Wall -Wextra -Werror
 
 all: $(PHILO)
 
-$(PHILO) : $(OBJ) $(HEADER)
+	$(PHILO) : $(OBJ) $(HEADER)
 	$(CC) $(FLAGS) $(PHILO_SRCS) -o $(PHILO)
 
+bonus: $(PHILO_BONUS)
+
+	$(PHILO_BONUS) : $(OBJ_BONUS) $(HEADER_BONUS)
+	$(CC) $(FLAGS) $(PHILO_BONUS_SRCS) -o $(PHILO_BONUS)
+
 clean:
-		$(RM) $(OBJ)
+		$(RM) $(OBJ) $(OBJ_BONUS)
 
 fclean: clean
-		$(RM) $(PHILO)
+		$(RM) $(PHILO) $(PHILO_BONUS)
 
 re: fclean all
 

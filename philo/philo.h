@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:40 by leldiss           #+#    #+#             */
-/*   Updated: 2022/05/17 17:07:34 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 13:44:51 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_info
 	t_philo			philosopher[666];
 }	t_info;
 
+int			is_late(t_philo *philo, t_info *info);
 void		print_error_message(char *str);
 void		error_message(int error);
 int			ft_atoi(const char *str);

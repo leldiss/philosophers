@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/05/17 18:28:23 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/10 13:38:29 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	show_actions(t_philo *philo, char *msg)
 	long long	time;
 
 	time = get_timestamp() - philo->conditions->start_time;
-	printf("%lld philo %d %s\n", time, philo->id + 1, msg);
+	printf("%lld philo %d %s\n", time, philo->id, msg);
 }
 
 void	philo_sleep(t_philo *philo)
@@ -32,11 +32,14 @@ void	philo_sleep(t_philo *philo)
 			time = philo->conditions->time_to_sleep;
 		else
 			time = philo->conditions->time_to_die - time;
+		show_actions(philo, "is sleeping");
+		usleep(time * 1000);
 	}
 	else
+	{
+		philo->alive = 0;
 		time = 1;
-	show_actions(philo, "is sleeping");
-	usleep(time * 1000);
+	}
 }
 
 void	start_eating(t_philo *philo)
@@ -44,35 +47,29 @@ void	start_eating(t_philo *philo)
 	t_info	*conditions;
 
 	conditions = philo->conditions;
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(&(conditions->forks[philo->left_fork_id]));
-		pthread_mutex_lock(&(conditions->forks[philo->right_fork_id]));
-	}
-	else
-	{
-		pthread_mutex_lock(&(conditions->forks[philo->right_fork_id]));
-		pthread_mutex_lock(&(conditions->forks[philo->left_fork_id]));
-	}
+	sem_wait(conditions->forks);
 	show_actions(philo, "has taken a fork");
+	if ((is_late(philo, conditions)) == 1)
+		return ;
+	sem_wait(conditions->forks);
 	show_actions(philo, "has taken a fork");
 	show_actions(philo, "is eating");
 	usleep(philo->conditions->time_to_eat * 1000);
-	pthread_mutex_unlock(&(conditions->forks[philo->left_fork_id]));
-	pthread_mutex_unlock(&(conditions->forks[philo->right_fork_id]));
+	sem_post(conditions->forks);
+	sem_post(conditions->forks);
 	philo->time_last_meal = get_timestamp();
 	philo->ate_count++;
 }
 
-void	*start_actions(void *args)
+void	start_actions(t_philo *args, int i)
 {
 	t_philo	*philo;
 
-	philo = (t_philo *)args;
+	philo = &args[i];
 	if (philo->id % 2 == 0)
 	{
-		show_actions(philo, "is sleeping");
-		usleep(philo->conditions->time_to_sleep * 1000);
+		philo_sleep(philo);
+		is_philo_dead(philo);
 	}
 	while (philo->alive == 1)
 	{
@@ -87,7 +84,6 @@ void	*start_actions(void *args)
 		show_actions(philo, "is thinking");
 	}
 	show_actions(philo, "died");
-	return (philo);
 }
 
 void	get_started(t_info *info)
@@ -100,17 +96,16 @@ void	get_started(t_info *info)
 	info->start_time = get_timestamp();
 	while (i < info->philo)
 	{
-		if (pthread_create(&(philosophers[i].thread_id),
-				NULL, start_actions, &(philosophers[i])))
-			error_message(-2);
 		philosophers[i].time_last_meal = get_timestamp();
-		i++;
-	}
-	i = 0;
-	while (i < info->philo)
-	{
-		if (pthread_join(*(&(philosophers[i].thread_id)), NULL))
-			error_message(-3);
+		philosophers[i].philo_pid = fork();
+		if (philosophers[i].philo_pid < 0)
+			error_message(-2);
+		else if (philosophers[i].philo_pid == 0)
+		{
+			start_actions(philosophers, i);
+			free_all(info);
+			exit(1);
+		}
 		i++;
 	}
 }

@@ -6,40 +6,39 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:27:30 by leldiss           #+#    #+#             */
-/*   Updated: 2022/05/17 17:11:26 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/09 23:12:32 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_mutex(t_info *info)
+void	init_philo(t_info *info, int size)
 {
-	int	count;
+	t_philo	*tmp;
+	int		i;
 
-	count = 0;
-	while (count < info->philo)
+	tmp = (t_philo *)malloc((sizeof(*tmp) * size));
+	info->philosopher = tmp;
+	i = 1;
+	while (i <= size)
 	{
-		if (pthread_mutex_init(&(info->forks[count]), NULL))
-			error_message(-4);
-		count++;
+		tmp->alive = 1;
+		tmp->ate_count = 0;
+		tmp->time_last_meal = 0;
+		tmp->id = i;
+		tmp->conditions = info;
+		tmp->philo_pid = 0;
+		tmp++;
+		i++;
 	}
 }
 
-void	init_philosophers(t_info *info)
+void	init_sem(t_info *info)
 {
-	int	count;
-
-	count = 0;
-	while (count < info->philo)
-	{
-		info->philosopher[count].id = count;
-		info->philosopher[count].left_fork_id = count;
-		info->philosopher[count].right_fork_id = (count + 1) % info->philo;
-		info->philosopher[count].alive = 1;
-		info->philosopher[count].ate_count = 0;
-		info->philosopher[count].conditions = info;
-		count++;
-	}
+	sem_unlink("/forks");
+	info->forks = sem_open("/forks", O_CREAT, S_IRWXU, info->philo);
+	if (info->forks == SEM_FAILED)
+		error_message(-4);
 }
 
 void	init(t_info *info, char **argv, int argc)
@@ -52,6 +51,6 @@ void	init(t_info *info, char **argv, int argc)
 		info->times_must_eat = ft_atoi(argv[5]);
 	else
 		info->times_must_eat = -1;
-	init_philosophers(info);
-	init_mutex(info);
+	init_philo(info, info->philo);
+	init_sem(info);
 }
