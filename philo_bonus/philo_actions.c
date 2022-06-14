@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 15:42:22 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 18:19:03 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ void	show_actions(t_philo *philo, char *msg)
 	long long	time;
 
 	time = get_timestamp() - philo->conditions->start_time;
+	sem_wait(philo->conditions->write);
 	printf("%lld philo %d %s\n", time, philo->id, msg);
+	sem_post(philo->conditions->write);
 }
 
 void	philo_sleep(t_philo *philo)
@@ -54,10 +56,10 @@ void	start_eating(t_philo *philo)
 	sem_wait(conditions->forks);
 	show_actions(philo, "has taken a fork");
 	show_actions(philo, "is eating");
+	philo->time_last_meal = get_timestamp();
 	usleep(philo->conditions->time_to_eat * 1000);
 	sem_post(conditions->forks);
 	sem_post(conditions->forks);
-	philo->time_last_meal = get_timestamp();
 	philo->ate_count++;
 }
 
@@ -77,13 +79,16 @@ void	start_actions(t_philo *args, int i)
 		{
 			if (philo->ate_count != philo->conditions->times_must_eat)
 				start_eating(philo);
+			if (philo->ate_count == philo->conditions->times_must_eat)
+				return ;
 		}
+		is_philo_dead(philo);
 		philo_sleep(philo);
-		if (is_philo_dead(philo))
-			break ;
-		show_actions(philo, "is thinking");
 	}
+	sem_wait(philo->conditions->dead);
 	show_actions(philo, "died");
+	if (philo->conditions->times_must_eat > 0)
+		sem_post(philo->conditions->dead);
 }
 
 void	get_started(t_info *info)
@@ -103,6 +108,7 @@ void	get_started(t_info *info)
 		else if (philosophers[i].philo_pid == 0)
 		{
 			start_actions(philosophers, i);
+			kill_process(info, philosophers);
 			free_all(info);
 			exit(1);
 		}

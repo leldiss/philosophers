@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:27:30 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 15:42:50 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 17:23:06 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,14 @@ void	init_philo(t_info *info, int size)
 void	init_sem(t_info *info)
 {
 	sem_unlink("/forks");
+	sem_unlink("/dead");
+	sem_unlink("/write");
+	info->write = sem_open("/write", O_CREAT, S_IRWXU, 1);
+	if (info->write == SEM_FAILED)
+		error_message(-4, info);
+	info->dead = sem_open("/dead", O_CREAT, S_IRWXU, 1);
+	if (info->dead == SEM_FAILED)
+		error_message(-4, info);
 	info->forks = sem_open("/forks", O_CREAT, S_IRWXU, info->philo);
 	if (info->forks == SEM_FAILED)
 		error_message(-4, info);

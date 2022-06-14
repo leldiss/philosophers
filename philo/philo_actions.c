@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 15:33:43 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 19:44:42 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ void	show_actions(t_philo *philo, char *msg)
 	long long	time;
 
 	time = get_timestamp() - philo->conditions->start_time;
+	pthread_mutex_lock(&(philo->conditions->write));
 	printf("%lld philo %d %s\n", time, philo->id, msg);
+	pthread_mutex_unlock(&(philo->conditions->write));
 }
 
 void	philo_sleep(t_philo *philo)
@@ -54,10 +56,10 @@ void	start_eating(t_philo *philo)
 	pthread_mutex_lock(&(conditions->forks[philo->right_fork_id]));
 	show_actions(philo, "has taken a fork");
 	show_actions(philo, "is eating");
+	philo->time_last_meal = get_timestamp();
 	usleep(philo->conditions->time_to_eat * 1000);
 	pthread_mutex_unlock(&(conditions->forks[philo->right_fork_id]));
 	pthread_mutex_unlock(&(conditions->forks[philo->left_fork_id]));
-	philo->time_last_meal = get_timestamp();
 	philo->ate_count++;
 }
 
@@ -77,13 +79,15 @@ void	*start_actions(void *args)
 		{
 			if (philo->ate_count != philo->conditions->times_must_eat)
 				start_eating(philo);
+			if (philo->ate_count == philo->conditions->times_must_eat)
+				return (philo);
 		}
+		if (philo->conditions->closet && philo->conditions->times_must_eat < 0)
+			return (philo);
+		is_philo_dead(philo);
 		philo_sleep(philo);
-		if (is_philo_dead(philo))
-			break ;
-		show_actions(philo, "is thinking");
 	}
-	show_actions(philo, "died");
+	time_to_die(philo->conditions, philo);
 	return (philo);
 }
 

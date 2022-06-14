@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:28:05 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 15:41:18 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 18:09:00 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,17 @@ long long	get_timestamp(void)
 
 int	is_philo_dead(t_philo *philo)
 {
-	struct timeval	time;
 	int				diff;
+	int				sleep;
 
-	gettimeofday(&time, NULL);
-	diff = (time.tv_sec * 1000) + (time.tv_usec / 1000) - philo->time_last_meal;
-	if (philo->conditions->time_to_die <= diff)
+	show_actions(philo, "is thinking");
+	diff = philo->conditions->time_to_die
+		- (get_timestamp() - philo->time_last_meal);
+	if (philo->conditions->time_to_eat >= diff)
 	{
 		philo->alive = 0;
+		sleep = diff;
+		usleep(sleep * 1000);
 		return (1);
 	}
 	return (0);

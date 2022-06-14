@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:40 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 13:44:51 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 19:45:03 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,15 @@ typedef struct s_info
 	int				time_to_sleep;
 	int				times_must_eat;
 	long long		start_time;
+	int				closet;
 	pthread_mutex_t	forks[666];
+	pthread_mutex_t	dead;
+	pthread_mutex_t	write;
 	t_philo			philosopher[666];
 }	t_info;
 
 int			is_late(t_philo *philo, t_info *info);
+void		time_to_die(t_info *info, t_philo *philo);
 void		print_error_message(char *str);
 void		error_message(int error);
 int			ft_atoi(const char *str);

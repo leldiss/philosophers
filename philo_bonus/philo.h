@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:40 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 15:43:30 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 17:47:29 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+# include <signal.h>
 # include <pthread.h>
 # include <semaphore.h>
 # include <sys/time.h>
@@ -44,6 +45,8 @@ typedef struct s_info
 	int				times_must_eat;
 	long long		start_time;
 	sem_t			*forks;
+	sem_t			*dead;
+	sem_t			*write;
 	t_philo			*philosopher;
 }	t_info;
 
@@ -51,6 +54,7 @@ t_info		*create_info(void);
 int			is_late(t_philo *philo, t_info *info);
 void		init_philo(t_info *info, int size);
 void		free_all(t_info *info);
+void		kill_process(t_info *info, t_philo *philosophers);
 
 void		print_error_message(char *str);
 void		error_message(int error, t_info *info);

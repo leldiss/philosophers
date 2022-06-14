@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:45 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/10 15:45:39 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/14 18:25:22 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,19 @@
 
 int	is_late(t_philo *philo, t_info *info)
 {
-	int	death_time;
-	int	time;
+	long long	death_time;
+	long long	time;
 
 	if (info->philo % 2 == 1)
 	{
 		if (philo->id == info->philo - 1)
 		{
-			time = get_timestamp() - philo->time_last_meal;
-			death_time = (philo->time_last_meal
-					+ info->time_to_die) - get_timestamp();
+			time = get_timestamp();
+			death_time = philo->time_last_meal + info->time_to_die;
 			if (death_time <= time + info->time_to_eat)
 			{
 				philo->alive = 0;
-				usleep((info->time_to_die - time) * 1000);
+				usleep((death_time - time) * 1000);
 				sem_post(info->forks);
 				return (1);
 			}
@@ -36,11 +35,28 @@ int	is_late(t_philo *philo, t_info *info)
 	return (0);
 }
 
+void	kill_process(t_info *info, t_philo *philosophers)
+{
+	int	k;
+
+	k = 0;
+	while (k < info->philo)
+	{
+		if (info->times_must_eat < 0)
+			kill(philosophers[k].philo_pid, SIGKILL);
+		k++;
+	}
+}
+
 void	free_all(t_info *info)
 {
 	if (info == NULL)
 		return ;
 	if (info->forks != NULL)
+		sem_close(info->forks);
+	if (info->dead != NULL)
+		sem_close(info->forks);
+	if (info->write != NULL)
 		sem_close(info->forks);
 	if (info->philosopher != NULL)
 		free(info->philosopher);
@@ -58,6 +74,7 @@ t_info	*create_info(void)
 	tmp->time_to_eat = 0;
 	tmp->times_must_eat = 0;
 	tmp->start_time = 0;
+	tmp->dead = NULL;
 	tmp->forks = NULL;
 	tmp->philosopher = NULL;
 	return (tmp);
