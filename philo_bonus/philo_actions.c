@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/14 18:19:03 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/15 10:43:26 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,8 @@ void	start_actions(t_philo *args, int i)
 		philo_sleep(philo);
 	}
 	sem_wait(philo->conditions->dead);
+	philo->conditions->closep = 1;
 	show_actions(philo, "died");
-	if (philo->conditions->times_must_eat > 0)
-		sem_post(philo->conditions->dead);
 }
 
 void	get_started(t_info *info)

@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:45 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/14 18:25:22 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/15 10:26:17 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,10 @@ void	kill_process(t_info *info, t_philo *philosophers)
 	k = 0;
 	while (k < info->philo)
 	{
-		if (info->times_must_eat < 0)
-			kill(philosophers[k].philo_pid, SIGKILL);
+		if (info->closep == 1)
+		{
+			kill(philosophers[k].philo_pid, SIGTERM);
+		}
 		k++;
 	}
 }
@@ -70,6 +72,7 @@ t_info	*create_info(void)
 
 	tmp = (t_info *)malloc(sizeof(*tmp));
 	tmp->philo = 0;
+	tmp->closep = 0;
 	tmp->time_to_die = 0;
 	tmp->time_to_eat = 0;
 	tmp->times_must_eat = 0;

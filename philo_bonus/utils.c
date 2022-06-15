@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:28:05 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/14 18:09:00 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/15 10:46:41 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	error_message(int error, t_info *info)
 	else if (error == -5)
 		print_error_message("Negative argument");
 	else if (error == -6)
-		print_error_message("Argument is more than MAX_INT");
+		print_error_message("Argument is more than MAX_INT or equal 0");
 	else if (error == -7)
 		print_error_message("Only numeral arguments is allowed");
 	free_all(info);
@@ -63,7 +63,10 @@ int	is_philo_dead(t_philo *philo)
 	if (philo->conditions->time_to_eat >= diff)
 	{
 		philo->alive = 0;
-		sleep = diff;
+		if (diff < 0)
+			sleep = 1;
+		else
+			sleep = diff;
 		usleep(sleep * 1000);
 		return (1);
 	}
@@ -93,7 +96,7 @@ int	ft_atoi(const char *str, t_info *info)
 		}
 		str++;
 	}
-	if (result > MAX_INT)
+	if (result > MAX_INT || result == 0)
 		error_message(-6, info);
 	return (result);
 }

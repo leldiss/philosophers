@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 12:31:40 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/14 17:47:29 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/15 09:10:17 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_info
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				times_must_eat;
+	int				closep;
 	long long		start_time;
 	sem_t			*forks;
 	sem_t			*dead;

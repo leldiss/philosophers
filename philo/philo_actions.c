@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:46:34 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/14 19:44:42 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/15 08:41:40 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@ void	show_actions(t_philo *philo, char *msg)
 	long long	time;
 
 	time = get_timestamp() - philo->conditions->start_time;
-	pthread_mutex_lock(&(philo->conditions->write));
-	printf("%lld philo %d %s\n", time, philo->id, msg);
-	pthread_mutex_unlock(&(philo->conditions->write));
+	if (philo->conditions->closet == 0)
+	{
+		pthread_mutex_lock(&(philo->conditions->write));
+		printf("%lld philo %d %s\n", time, philo->id, msg);
+		pthread_mutex_unlock(&(philo->conditions->write));
+	}
 }
 
 void	philo_sleep(t_philo *philo)
@@ -82,8 +85,8 @@ void	*start_actions(void *args)
 			if (philo->ate_count == philo->conditions->times_must_eat)
 				return (philo);
 		}
-		if (philo->conditions->closet && philo->conditions->times_must_eat < 0)
-			return (philo);
+		if (philo->conditions->closet)
+			break ;
 		is_philo_dead(philo);
 		philo_sleep(philo);
 	}

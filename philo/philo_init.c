@@ -6,7 +6,7 @@
 /*   By: leldiss <leldiss@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:27:30 by leldiss           #+#    #+#             */
-/*   Updated: 2022/06/14 19:44:58 by leldiss          ###   ########.fr       */
+/*   Updated: 2022/06/15 08:29:28 by leldiss          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	is_late(t_philo *philo, t_info *info)
 void	time_to_die(t_info *info, t_philo *philo)
 {
 	pthread_mutex_lock(&(info->dead));
-	if (info->closet == 0 || info->times_must_eat > 0)
+	if (info->closet == 0)
 		show_actions(philo, "died");
 	info->closet = 1;
 	pthread_mutex_unlock(&(info->dead));
